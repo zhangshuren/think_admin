@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Think Admin 后台管理系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="__JS__/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="__CSS__/font-awesome.min.css">
+    <link rel="stylesheet" href="__CSS__/admin.css">
+    <!--[if lt IE 9]>
+    <script src="__CSS__/html5shiv.min.js"></script>
+    <script src="__CSS__/respond.min.js"></script>
+    <![endif]-->
+    <script>
+	    // 定义全局JS变量
+	    var GV = {
+	        current_controller: "admin/{$controller|default=''}/",
+	        base_url: "__STATIC__"
+	    };
+	</script>
+	<!--JS引用-->
+	<script src="__JS__/jquery.min.js"></script>
+	<script src="__JS__/layui/lay/dest/layui.all.js"></script>
+	<script src="__JS__/admin.js"></script>
+</head>
+<body>
+	<div class="layui-layout layui-layout-admin">
+	    <!--tab标签-->
+	    <div class="layui-tab layui-tab-brief">
+	        <ul class="layui-tab-title">
+	            <li class="layui-this">关联栏目</li>
+	            <!--<li class=""><a href="">添加栏目</a></li>-->
+	        </ul>
+	        <div class="layui-tab-content">
+	            <div class="layui-tab-item layui-show">
+	                <table class="layui-table">
+	                    <thead>
+	                    <tr>
+	                        <th style="width: 30px;">ID</th>
+	                        <th style="width: 30px;">排序</th>
+	                        <th>栏目名称</th>
+	                        <th>操作</th>
+	                    </tr>
+	                    </thead>
+	                    <tbody>
+	                    {foreach name="category_level_list" item="vo"}
+	                    <tr>
+	                        <td>{$vo.id}</td>
+	                        <td>{$vo.sort}</td>
+	                        <td>{neq name="vo.level" value="1"}|{php}for($i=1;$i<$vo['level'];$i++){echo ' ----';}{/php}{/neq} {$vo.name}</td>
+	                        <td>
+	                          	<button data-url = "{:url('index/Article/lists',['cid'=>$vo.id],'')}" class="layui-btn layui-btn-primary">选择</button>
+	                        </td>
+	                    </tr>
+	                    {/foreach}
+	                    </tbody>
+	                </table>
+	            </div>
+	        </div>
+	    </div>
+	    <div style="text-align:center">
+	    	<button class="layui-btn" onclick="parent.layer.closeAll()" id="saveBtn">保存修改</button>
+	    </div>
+	</div>
+	<script type="text/javascript">
+		$("td button").on('click' , function(){
+			console.log('change btn ...');
+			console.log($(this).data('url'));
+			$(".layui-btn-normal").toggleClass('layui-btn-primary layui-btn-normal');
+			$(this).removeClass('layui-btn-primary');
+			$(this).addClass('layui-btn-normal');
+			parent.$('#link').val($(this).data('url'));
+		});
+	</script>
+</body>
+</html>
+
+

@@ -111,4 +111,16 @@ class Nav extends AdminBase
             $this->error('删除失败');
         }
     }
+	
+	/**
+	 * 列出分类，用于关联导航链接
+	 */
+	public function getCategoryListForSetLink(){
+		$this->category_model = new CategoryModel();
+        $this->article_model  = new ArticleModel();
+        $category_level_list  = $this->category_model->getLevelList();
+        $this->assign('category_level_list', $category_level_list);		
+		return $this->fetch();
+	}
+	
 }

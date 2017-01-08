@@ -37,7 +37,9 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">链接</label>
                         <div class="layui-input-block">
-                            <input type="text" name="link" value="{$nav.link}" placeholder="（选填）请输入导航链接" class="layui-input">
+                        	<input type="text" name="link" id="link" value="{$nav.link}" placeholder="（选填）请输入导航链接" class="layui-input layui-input-inline">
+                            <button type="button" id="setLinkBtn" class="layui-btn layui-btn-primary">关联栏目</button>
+                            <!--<input type="text" name="link" value="{$nav.link}" placeholder="（选填）请输入导航链接" class="layui-input">-->
                         </div>
                     </div>
                     <div class="layui-form-item">
@@ -78,4 +80,18 @@
         </div>
     </div>
 </div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+	$("#setLinkBtn").on('click', function(){
+		console.log('show selectLinkModel ...');
+		layer.open({
+		  type: 2,
+		  area: ['900px', '630px'],
+		  fixed: false, //不固定
+		  maxmin: true,
+		  content: "{:url('getCategoryListForSetLink')}"
+		});
+	});
+</script>
 {/block}

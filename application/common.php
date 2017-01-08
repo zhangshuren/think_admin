@@ -79,48 +79,50 @@ function get_articles_by_cid_paged($cid, $page_size = 15, $where = [], $order = 
  * @param int   $level
  * @return array
  */
-function array2level($array, $pid = 0, $level = 1)
+function array2level($array, $pid = 0, $level = 1, &$list=[])
 {
-    static $list = [];
     foreach ($array as $v) {
         if ($v['pid'] == $pid) {
             $v['level'] = $level;
             $list[]     = $v;
-            array2level($array, $v['id'], $level + 1);
+            array2level($array, $v['id'], $level + 1, $list);
         }
     }
 
     return $list;
 }
 
+
 /**
- * 构建层级（树状）数组
- * @param array  $array          要进行处理的一维数组，经过该函数处理后，该数组自动转为树状数组
- * @param string $pid_name       父级ID的字段名
- * @param string $child_key_name 子元素键名
- * @return array|bool
+ * 把返回的数据集转换成Tree
+ * @param array $list 要转换的数据集
+ * @param string $pid parent标记字段
+ * @param string $level level标记字段
+ * @return array
+ * @author 麦当苗儿 <zuojiazi@vip.qq.com>
  */
-function array2tree(&$array, $pid_name = 'pid', $child_key_name = 'children')
-{
-    $counter = array_children_count($array, $pid_name);
-    if (!isset($counter[0]) || $counter[0] == 0) {
-        return $array;
-    }
-    $tree = [];
-    while (isset($counter[0]) && $counter[0] > 0) {
-        $temp = array_shift($array);
-        if (isset($counter[$temp['id']]) && $counter[$temp['id']] > 0) {
-            array_push($array, $temp);
-        } else {
-            if ($temp[$pid_name] == 0) {
-                $tree[] = $temp;
-            } else {
-                $array = array_child_append($array, $temp[$pid_name], $temp, $child_key_name);
+function array2tree($list, $pk='id', $pid = 'pid', $child = 'children', $root = 0) {
+    // 创建Tree
+    $tree = array();
+    if(is_array($list)) {
+        // 创建基于主键的数组引用
+        $refer = array();
+        foreach ($list as $key => $data) {
+            $refer[$data[$pk]] =& $list[$key];
+        }
+        foreach ($list as $key => $data) {
+            // 判断是否存在parent
+            $parentId =  $data[$pid];
+            if ($root == $parentId) {
+                $tree[] =& $list[$key];
+            }else{
+                if (isset($refer[$parentId])) {
+                    $parent =& $refer[$parentId];
+                    $parent[$child][] =& $list[$key];
+                }
             }
         }
-        $counter = array_children_count($array, $pid_name);
     }
-
     return $tree;
 }
 
